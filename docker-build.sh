@@ -1,2 +1,2 @@
-docker build -t alexeybelous/azurite:1.1 .
-docker push alexeybelous/azurite:1.1
+docker build -t aleksandrsugak/azurite:2.8.0 .
+docker push aleksandrsugak/azurite:2.8.0
