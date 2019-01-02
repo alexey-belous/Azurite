@@ -28,6 +28,7 @@ const tableService = azureStorage.createTableService(
 );
 const entGen = azureStorage.TableUtilities.entityGenerator;
 const partitionKeyForTest = "azurite";
+const descriptionForTest = "bar";
 const rowKeyForTestEntity1 = "1";
 const rowKeyForTestEntity2 = "2";
 const EntityNotFoundErrorMessage =
@@ -45,7 +46,7 @@ describe("Table HTTP Api tests", () => {
   const tableEntity2 = {
     PartitionKey: entGen.String(partitionKeyForTest),
     RowKey: entGen.String(rowKeyForTestEntity2),
-    description: entGen.String("bar"),
+    description: entGen.String(descriptionForTest),
     dueDate: entGen.DateTime(new Date(Date.UTC(2018, 12, 26))),
   };
 
@@ -243,6 +244,29 @@ describe("Table HTTP Api tests", () => {
         expect(error).to.equal(null);
         expect(response.body.value.length).to.equal(1);
         expect(result.entries.length).to.equal(1);
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it("should find entities by custom field filter", (done) => {
+      const query = new azureStorage.TableQuery()
+      .top(1)
+      .where("description eq ?", descriptionForTest);
+  
+      const retrievalTableService = azureStorage.createTableService(
+        "UseDevelopmentStorage=true"
+      );
+  
+      retrievalTableService.queryEntities(tableName, query, null, function(
+        error,
+        result,
+        response
+      ) {
+        expect(error).to.equal(null);
+        expect(response.body.value.length).to.equal(1);
+        expect(result.entries.length).to.equal(1);
+        expect(result.entries[0].RowKey._).to.equal(rowKeyForTestEntity2);
         expect(response.statusCode).to.equal(200);
         done();
       });
