@@ -28,7 +28,7 @@ const tableService = azureStorage.createTableService(
 );
 const entGen = azureStorage.TableUtilities.entityGenerator;
 const partitionKeyForTest = "azurite";
-const descriptionForTest = "bar";
+const descriptionForTest = "bar@baz.com";
 const rowKeyForTestEntity1 = "1";
 const rowKeyForTestEntity2 = "2";
 const EntityNotFoundErrorMessage =
@@ -249,7 +249,7 @@ describe("Table HTTP Api tests", () => {
       });
     });
 
-    it("should find entities by custom field filter", (done) => {
+    it("should find entities by custom field filter with special characters", (done) => {
       const query = new azureStorage.TableQuery()
       .top(1)
       .where("description eq ?", descriptionForTest);
@@ -263,7 +263,7 @@ describe("Table HTTP Api tests", () => {
         result,
         response
       ) {
-        expect(error).to.equal(null);
+        expect(error).to.equal(null, "but was " + error);
         expect(response.body.value.length).to.equal(1);
         expect(result.entries.length).to.equal(1);
         expect(result.entries[0].RowKey._).to.equal(rowKeyForTestEntity2);
